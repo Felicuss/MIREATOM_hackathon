@@ -1,0 +1,224 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактор LaTeX-формул</title>
+    <link rel="stylesheet" href="https://unpkg.com/mathlive/dist/mathlive.min.css">
+    <script src="https://unpkg.com/mathlive/dist/mathlive.min.js"></script>
+    <meta name="csrf-token" content="{{ csrf_token }}"> <!-- Добавьте CSRF токен -->
+    <style>
+        /* Основной стиль */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding-top: 20px;
+        }
+
+        /* Карточка редактора */
+        .editor-container {
+            width: 60%;
+            background: #ffffff;
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .editor-container:hover {
+            transform: scale(1.02);
+            box-shadow: 0px 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Заголовок */
+        .editor-title {
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+
+        /* Поле ввода названия */
+        .title-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 18px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        /* Поле редактирования формулы */
+        .formula-editor-container {
+            margin-bottom: 20px;
+        }
+
+        .formula-editor {
+            display: block;
+            width: 100%;
+            min-height: 150px;
+            font-size: 20px;
+            padding: 10px;
+            border: 2px solid #007BFF;
+            border-radius: 12px;
+            background: #f9f9fc;
+            transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+
+        .formula-editor:focus-within {
+            box-shadow: 0 0 12px rgba(0, 123, 255, 0.5);
+            transform: scale(1.01);
+        }
+
+        /* Поле ввода описания */
+        .description-editor-container {
+            margin-top: 20px;
+        }
+
+        .description-editor {
+            display: block;
+            width: 100%;
+            min-height: 100px;
+            font-size: 18px;
+            padding: 10px;
+            border: 2px solid #007BFF;
+            border-radius: 12px;
+            background: #f9f9fc;
+            transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+
+        .description-editor:focus-within {
+            box-shadow: 0 0 12px rgba(0, 123, 255, 0.5);
+            transform: scale(1.01);
+        }
+
+        /* Результат */
+        .latex-output-container {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f8f8fb;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            color: #555;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            min-height: 50px;
+        }
+
+        /* Кнопки */
+        button {
+            width: 100%;
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.3s ease;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #0056b3, #003f7f);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="editor-container">
+        <h1 class="editor-title">Редактор LaTeX-формул</h1>
+
+        <!-- Ввод названия формулы -->
+        <input id="title-input" class="title-input" type="text" placeholder="Введите название формулы" required>
+
+        <!-- Поле редактирования формулы -->
+        <div class="formula-editor-container">
+            <math-field id="formula-editor" class="formula-editor" virtual-keyboard-mode="onfocus" virtual-keyboard-theme="material"></math-field>
+        </div>
+
+        <h2>LaTeX-код формулы:</h2>
+        <div id="latex-output" class="latex-output-container"></div>
+
+        <!-- Ввод описания с возможностью вставки формул -->
+        <div class="description-editor-container">
+            <textarea id="description-input" class="description-editor" placeholder="Введите описание формулы. Можно использовать LaTeX!"></textarea>
+        </div>
+
+        <button onclick="saveFormula()">Сохранить формулу</button>
+        <button onclick="copyLatex()">Скопировать LaTeX</button>
+    </div>
+
+<script>
+    async function saveFormula() {
+        const latexCode = document.getElementById('formula-editor').value;
+        const title = document.getElementById('title-input').value;
+        const description = document.getElementById('description-input').value;
+
+        if (!latexCode || !title) {
+            alert("Формула или название не может быть пустым!");
+            return;
+        }
+
+        const data = {
+            title: title,
+            description: description,
+            latex_code: latexCode
+        };
+
+        const csrf_token = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Получаем CSRF токен
+
+        try {
+            const response = await fetch('/api/save-formula/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrf_token
+                },
+                body: JSON.stringify(data)
+            });
+
+            const responseData = await response.json();
+
+            if (responseData.status === 'success') {
+                alert(responseData.message);
+            } else if (responseData.status === 'duplicate') {
+                alert(responseData.message + "\n" + "Существующая формула:\n" + responseData.formula.latex_code);
+            } else {
+                alert('Ошибка: ' + responseData.message);
+            }
+        } catch (error) {
+            console.error('Ошибка при сохранении формулы:', error);
+        }
+    }
+
+    // Mathlive: редактируемая формула
+    const mathField = document.getElementById('formula-editor');
+    const latexOutput = document.getElementById('latex-output');
+
+    // Обработка изменений
+    mathField.addEventListener('input', () => {
+        const latex = mathField.getValue(); // Получаем LaTeX-код
+        latexOutput.textContent = latex; // Показываем LaTeX
+    });
+
+    // Функция копирования LaTeX
+    function copyLatex() {
+        const latex = mathField.getValue();
+        navigator.clipboard.writeText(latex).then(() => {
+            alert('LaTeX-код скопирован!');
+        });
+    }
+</script>
+</body>
+</html>
