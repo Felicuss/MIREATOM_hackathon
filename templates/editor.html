@@ -179,7 +179,7 @@
         const csrf_token = document.querySelector('meta[name="csrf-token"]').getAttribute('content'); // Получаем CSRF токен
 
         try {
-            const response = await fetch('/api/save-formula/', {
+            const response = await fetch('/save-formula/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

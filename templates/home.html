@@ -243,7 +243,7 @@
             const query = searchInput.value.trim();
 
             if (query.length > 2) {
-                fetch(`/api/search-suggestions/?query=${query}`)
+                fetch(`/search-suggestions/?query=${query}`)
                     .then(response => response.json())
                     .then(data => {
                         const suggestions = data.suggestions;
