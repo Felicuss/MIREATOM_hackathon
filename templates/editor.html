@@ -1,12 +1,12 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Редактор LaTeX-формул</title>
     <link rel="stylesheet" href="https://unpkg.com/mathlive/dist/mathlive.min.css">
-    <script src="https://unpkg.com/mathlive/dist/mathlive.min.js"></script>
+    <script src="{% static 'js/mathlive.js' %}"></script>
     <meta name="csrf-token" content="{{ csrf_token }}"> <!-- Добавьте CSRF токен -->
     <style>
         /* Основной стиль */
@@ -144,7 +144,7 @@
 
         <!-- Поле редактирования формулы -->
         <div class="formula-editor-container">
-            <math-field id="formula-editor" class="formula-editor" virtual-keyboard-mode="onfocus" virtual-keyboard-theme="material"></math-field>
+            <math-field id="formula-editor" class="formula-editor" virtual-keyboard-mode="onfocus" virtual-keyboard-theme="material" virtual-keyboard-language="ru"></math-field>
         </div>
 
         <h2>LaTeX-код формулы:</h2>
@@ -152,7 +152,7 @@
 
         <!-- Ввод описания с возможностью вставки формул -->
         <div class="description-editor-container">
-            <textarea id="description-input" class="description-editor" placeholder="Введите описание формулы. Можно использовать LaTeX!"></textarea>
+            <textarea id="description-input" class="description-editor" placeholder="Введите описание формулы"></textarea>
         </div>
 
         <button onclick="saveFormula()">Сохранить формулу</button>
@@ -206,7 +206,6 @@
     const mathField = document.getElementById('formula-editor');
     const latexOutput = document.getElementById('latex-output');
 
-    // Обработка изменений
     mathField.addEventListener('input', () => {
         const latex = mathField.getValue(); // Получаем LaTeX-код
         latexOutput.textContent = latex; // Показываем LaTeX

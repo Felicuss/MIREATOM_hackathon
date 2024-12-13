@@ -1,12 +1,147 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block content %}
-<div class="container mt-5">
-    <h2>Регистрация</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Зарегистрироваться</button>
-    </form>
-</div>
-{% endblock %}
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Регистрация</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/nullstyle.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+  <style>
+    .form-input {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    .login-button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      box-sizing: border-box;
+    }
+
+    .login-button:hover {
+      background-color: #218838;
+    }
+
+    .form-group {
+      margin-bottom: 10px; /* Уменьшены интервалы между формами */
+    }
+
+.password-input {
+  position: relative;
+}
+
+.password-input input {
+  width: 100%;
+  padding-right: 50px; /* Достаточный отступ для кнопки-глазика */
+}
+
+.toggle-password {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-password img {
+  width: 24px; /* Чуть больше, чтобы четче выделялась */
+  height: 24px;
+  pointer-events: none; /* Чтобы избежать кликов по изображению */
+}
+
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="column">
+      <div class="column-content">
+        <div class="auth-links">
+          <a href="{% url 'login' %}" class="auth-link">Войти</a>
+          <span class="auth-link auth-separator">|</span>
+          <a href="#" class="auth-link active-link">Зарегистрироваться</a>
+        </div>
+        <form method="post" class="login-form">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="email">Почта</label>
+            <input type="email" id="email" name="email" placeholder="Введите почту" class="form-input" required>
+          </div>
+
+          <div class="form-group">
+            <label for="first_name">Имя</label>
+            <input type="text" id="first_name" name="first_name" placeholder="Введите имя" class="form-input" required>
+          </div>
+
+          <div class="form-group">
+            <label for="last_name">Фамилия</label>
+            <input type="text" id="last_name" name="last_name" placeholder="Введите фамилию" class="form-input" required>
+          </div>
+
+          <div class="form-group">
+            <label for="password1">Пароль</label>
+            <div class="password-input">
+              <input type="password" id="password1" name="password1" placeholder="Введите пароль" class="form-input" required>
+              <button type="button" class="toggle-password">
+                <img src="{% static 'img/eye.svg' %}" alt="Показать пароль">
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password2">Подтверждение пароля</label>
+            <div class="password-input">
+              <input type="password" id="password2" name="password2" placeholder="Подтвердите пароль" class="form-input" required>
+              <button type="button" class="toggle-password">
+                <img src="{% static 'img/eye.svg' %}" alt="Показать пароль">
+              </button>
+            </div>
+          </div>
+
+          <div class="form-bottom">
+            <a href="{% url 'login' %}" class="forgot-password">Уже зарегистрированы?</a>
+          </div>
+
+          <div class="login-button-container">
+            <button type="submit" class="login-button">Зарегистрироваться</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="column">
+      <div class="column-content column-content-right">
+        <div>
+          <pre class="column-text">
+            // f(x) xyz plus g(x)%*xyz arrow
+            // www y(x) = f(x) summ
+            // f'(x) derivative plus integral
+            // lambda x.y -> beta reduction
+          </pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

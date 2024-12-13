@@ -30,6 +30,7 @@ class CustomUser(AbstractBaseUser):
     date_joined = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
+    profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
 
     USERNAME_FIELD = 'email'  # Используем email как основной идентификатор
     REQUIRED_FIELDS = ['first_name', 'last_name']  # Поля, которые обязательны при регистрации

@@ -4,54 +4,125 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Главная{% endblock %}</title>
-
-    <!-- Подключаем FontAwesome для иконок -->
+    <!-- Подключение Google Fonts и FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-
     <style>
-        /* Стили для шапки */
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f9;
+            color: #2c3e50;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Шапка */
         .header {
             width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #2c3e50;
-            padding: 15px 30px;
+            background-color: #003366;
+            padding: 10px 30px;
             color: white;
         }
 
-        .header a {
+        .header .logo {
+            font-size: 28px; /* Увеличенный размер текста */
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-right: 20px;
+            white-space: nowrap; /* Предотвращает перенос текста */
+        }
+
+        .header .nav {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            gap: 40px; /* Увеличенный промежуток между пунктами меню */
+        }
+
+        .header .nav a {
             text-decoration: none;
             color: white;
-            font-size: 24px;
+            font-size: 18px;
+            font-weight: 500;
+            transition: color 0.3s ease;
         }
 
-        .header .login-icon {
-            font-size: 28px;
-            cursor: pointer;
+        .header .nav a:hover {
+            color: #00bfff;
         }
 
-        /* Общие стили */
-        body {
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #f4f4f9;
+        .header .nav a.active {
+            font-weight: bold;
+            color: #00bfff;
         }
 
-        /* Контент */
-        .content {
-            margin-top: 20px;
+        .header .user-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px; /* Увеличенный размер иконки */
+            height: 45px;
+            background-color: #0056b3;
+            border-radius: 50%;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .header .user-icon i {
+            font-size: 22px;
+            color: white;
+        }
+
+        .header .user-icon:hover {
+            background-color: #007bff;
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .header .nav {
+                flex-wrap: wrap;
+                justify-content: flex-start;
+                gap: 15px;
+            }
+
+            .container {
+                padding: 10px;
+            }
         }
     </style>
+    {% block extra_styles %}{% endblock %}
 </head>
 <body>
-    <div class="header">
-        <a href="/" class="home-link">Главная</a>
-        <a href="/login/" class="login-icon"><i class="fas fa-user"></i></a>
-    </div>
-
-    <div class="content">
+    <header class="header">
+        <div class="logo">
+            <a href="/api/" style="text-decoration: none; color: white;">MathApp</a>
+        </div>
+        <nav class="nav">
+            <a href="/api/formula/" class="active">Формулы</a>
+            <a href="/api/">Главная страница</a>
+            <a href="/api/add-formula/">Добавить формулу</a>
+        </nav>
+        <div class="user-icon">
+            <a href="/api/login/" style="text-decoration: none;">
+                <i class="fas fa-user-circle"></i>
+            </a>
+        </div>
+    </header>
+    <div class="container">
         {% block content %}{% endblock %}
     </div>
 </body>

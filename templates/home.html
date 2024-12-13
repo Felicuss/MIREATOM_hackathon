@@ -1,5 +1,204 @@
-<!DOCTYPE html>
-<html lang="ru">
+{% extends "base.html" %}
+
+{% block title %}Главная{% endblock %}
+
+{% block extra_styles %}
+<style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f9fc;
+            color: #2c3e50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        h1 {
+            font-size: 48px;
+            color: #34495e;
+            margin: 40px 0;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .articles-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 40px 20px;
+            width: 100%;
+            max-width: 1200px;
+            gap: 20px;
+        }
+
+        form {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 12px 20px;
+            font-size: 18px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: #3498db;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 25px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+
+
+        /* Контейнер предложений */
+        .suggestions {
+            position: absolute;
+            background: white;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 500px;
+            margin-top: 8px;
+            border-radius: 8px;
+            z-index: 10;
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: opacity 0.3s ease, max-height 0.3s ease;
+        }
+
+        .suggestions.show {
+            opacity: 1;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .suggestions div {
+            padding: 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f1f1f1;
+            transition: background-color 0.2s ease;
+        }
+
+        .suggestions div:hover {
+            background-color: #f1f1f1;
+        }
+
+        .article-card {
+            width: 300px;
+            background-color: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .article-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .article-formula {
+            font-size: 28px;
+            margin-bottom: 15px;
+            background-color: #f0f4f8;
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            text-align: center;
+            height: 60px; /* Ограничиваем высоту для масштабирования */
+            position: relative;
+        }
+
+        .article-formula .mathjax-display {
+            display: inline-block;
+            white-space: nowrap;
+            transform-origin: center;
+        }
+
+        .article-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .article-description {
+            font-size: 16px;
+            color: #7f8c8d;
+            text-align: justify;
+            margin-bottom: 20px;
+        }
+
+        .open-article-btn {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .open-article-btn:hover {
+            background-color: #2980b9;
+            transform: scale(1.05);
+        }
+        @media (max-width: 1024px) {
+            .article-card {
+                width: 45%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .article-card {
+                width: 100%;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+
+            form {
+                flex-direction: column;
+            }
+
+            input[type="text"], button {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+    </style>
+{% endblock %}
+{% block content %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,157 +208,89 @@
     <script type="text/javascript" async
         src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
     </script>
-
-    <style>
-        /* Общие стили */
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Roboto', sans-serif;
-            background: linear-gradient(120deg, #fdfbfb, #ebedee);
-            color: #2c3e50;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        /* Заголовок страницы */
-        h1 {
-            margin: 30px 0;
-            font-size: 48px;
-            color: #34495e;
-            text-align: center;
-        }
-
-        /* Контейнер карточек */
-        .articles-container {
-            width: 90%;
-            max-width: 1200px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            padding: 30px 0;
-        }
-
-        /* Карточка статьи */
-        .article-card {
-            width: calc(33.333% - 20px);
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            margin: 10px;
-            padding: 20px;
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .article-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Формула на карточке */
-        .article-formula {
-            font-size: 28px;
-            text-align: center;
-            margin-bottom: 15px;
-            background: #f0f4f8;
-            padding: 10px;
-            border-radius: 10px;
-            overflow-x: auto; /* Добавляем прокрутку по оси X, если формула не помещается */
-            word-wrap: break-word; /* Разрыв строки при необходимости */
-        }
-
-        /* Заголовок статьи */
-        .article-title {
-            font-size: 20px;
-            font-weight: bold;
-            color: #2c3e50;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
-        /* Описание статьи */
-        .article-description {
-            font-size: 16px;
-            color: #7f8c8d;
-            text-align: justify;
-            margin-bottom: 20px;
-        }
-
-        /* Кнопка открытия статьи */
-        .open-article-btn {
-            text-align: center;
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: background 0.3s ease, transform 0.2s ease;
-            text-decoration: none;
-        }
-
-        .open-article-btn:hover {
-            background: linear-gradient(135deg, #2980b9, #1f5f7a);
-            transform: scale(1.05);
-        }
-
-        /* Респонсивный дизайн */
-        @media (max-width: 1024px) {
-            .article-card {
-                width: calc(50% - 20px);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .article-card {
-                width: calc(100% - 20px);
-            }
-
-            h1 {
-                font-size: 36px;
-            }
-        }
-    </style>
 </head>
 <body>
-    <h1>Все статьи и формулы</h1>
+    <h1>Формулы и Статьи</h1>
+    <form method="get" action="{% url 'homepage' %}">
+        <input type="text" name="query" id="search-input" placeholder="Введите название статьи..." value="{{ query }}">
+        <button type="submit">Искать</button>
+        <div id="suggestions-container" class="suggestions"></div>
+    </form>
     <div class="articles-container">
         {% for formula in formulas %}
             <div class="article-card">
-                <!-- Формула -->
-                <div class="article-formula">
-                    <div id="formula-{{ formula.id }}" class="mathjax-display">
+                <div class="article-formula" id="formula-{{ formula.id }}">
+                    <div class="mathjax-display">
                         \( {{ formula.latex_code }} \)
                     </div>
                 </div>
-
-                <!-- Заголовок -->
-                <div class="article-title">
-                    {{ formula.title }}
-                </div>
-
-                <!-- Описание -->
-                <div class="article-description">
-                    {{ formula.description|slice:":150" }}...
-                </div>
-
-                <!-- Кнопка открытия -->
+                <div class="article-title">{{ formula.title }}</div>
+                <div class="article-description">{{ formula.description|slice:":150" }}...</div>
                 <a href="{% url 'article_detail' formula.id %}" class="open-article-btn">Открыть статью</a>
             </div>
+        {% empty %}
+            <p style="text-align: center; font-size: 18px; color: #7f8c8d;">Статьи не найдены.</p>
         {% endfor %}
     </div>
 
     <script>
         MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-    </script>
 
+        const searchInput = document.getElementById('search-input');
+        const suggestionsContainer = document.getElementById('suggestions-container');
+
+        searchInput.addEventListener('input', function() {
+            const query = searchInput.value.trim();
+
+            if (query.length > 2) {
+                fetch(`/api/search-suggestions/?query=${query}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const suggestions = data.suggestions;
+                        if (suggestions.length > 0) {
+                            suggestionsContainer.innerHTML = suggestions.map(item => `<div>${item}</div>`).join('');
+                            suggestionsContainer.classList.add('show');
+                        } else {
+                            suggestionsContainer.classList.remove('show');
+                        }
+                    });
+            } else {
+                suggestionsContainer.classList.remove('show');
+            }
+        });
+
+        document.addEventListener('click', function(event) {
+            if (!searchInput.contains(event.target)) {
+                suggestionsContainer.classList.remove('show');
+            }
+        });
+        function scaleFormula(container) {
+            const formula = container.querySelector('.mathjax-display');
+            const containerWidth = container.offsetWidth;
+            const containerHeight = container.offsetHeight;
+            let scale = 1; // Начальный масштаб
+
+            // Определяем масштаб, чтобы формула влезала в контейнер
+            if (formula.scrollWidth > containerWidth || formula.scrollHeight > containerHeight) {
+                scale = Math.min(containerWidth / formula.scrollWidth, containerHeight / formula.scrollHeight);
+            }
+
+            // Применяем масштаб через transform
+            formula.style.transform = `scale(${scale})`;
+        }
+
+        // Применяем масштабирование после рендеринга MathJax
+        MathJax.Hub.Queue(() => {
+            const formulaContainers = document.querySelectorAll('.article-formula');
+            formulaContainers.forEach(container => scaleFormula(container));
+        });
+
+        // Пересчитываем масштаб при изменении размеров окна
+        window.addEventListener('resize', () => {
+            const formulaContainers = document.querySelectorAll('.article-formula');
+            formulaContainers.forEach(container => scaleFormula(container));
+        });
+    </script>
 </body>
 </html>
+{% endblock %}

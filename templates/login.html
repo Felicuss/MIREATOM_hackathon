@@ -1,12 +1,71 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block content %}
-<div class="container mt-5">
-    <h2>Вход</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Войти</button>
-    </form>
-</div>
-{% endblock %}
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вход</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/nullstyle.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div class="container">
+    <div class="column">
+      <div class="column-content">
+        <div class="auth-links">
+          <a href="#" class="auth-link active-link">Войти</a> <span class="auth-link auth-separator">|</span> <a
+            href="/api/register/" class="auth-link">Зарегистрироваться</a>
+        </div>
+        <form method="post" class="login-form">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="login">Почта</label>
+            <input type="text" id="login" name="username" placeholder="Введите логин" class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label for="password">Пароль</label>
+            <div class="password-input form-input">
+              <input type="password" id="password" name="password" placeholder="Введите пароль">
+              <button type="button" class="toggle-password">
+                <img src="{% static 'img/eye.svg' %}" alt="">
+              </button>
+            </div>
+          </div>
+
+          <div class="form-bottom">
+            <div class="remember-me">
+              <input type="checkbox" id="remember" name="remember">
+              <label for="remember">Запомнить меня</label>
+            </div>
+            <a href="#" class="forgot-password">Забыли пароль?</a>
+          </div>
+
+          <div class="login-button-container">
+            <button type="submit" class="login-button">Войти</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="column">
+      <div class="column-content column-content-right">
+        <div>
+          <pre class="column-text">
+            // f(x) xyz plus g(x)%*xyz arrow
+            // www y(x) = f(x) summ
+            // f'(x) derivative plus integral
+            // lambda x.y -> beta reduction
+          </pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>
