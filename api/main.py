@@ -1,3 +1,4 @@
+from fuzzywuzzy import fuzz
 from sympy.parsing.latex import parse_latex
 from sympy import simplify, latex
 from itertools import islice
@@ -62,15 +63,15 @@ def formula_hash(latex_formula):
         raise ValueError(f"Ошибка генерации хэша: {e}")
 
 
-def are_formulas_equal(hash1, hash2): return hash1 == hash2
+
+def compare_formulas(latex_formula1, latex_formula2):
+    norm_str1 = latex(latex_formula1)
+    norm_str2 = latex(latex_formula2)
+    similarity = fuzz.ratio(norm_str1, norm_str2)
+    print(similarity)
+    return similarity >= 75, similarity
+
 
 def all_normalize_formula(latex5):
     return normalize_formula(latex(simplify(rename_variables(str(normalize_formula(latex5))))))
-# Пример использования
-# latex1 = r"\frac{x^2}{y + z} + \cos(x \cdot y) + z^2 + \ln(x + y)"
-# print(all_normalize_formula(latex1))
-# latex2 = r"\frac{a^2}{b + c} + \cos(a \cdot b) + c^2 + \ln(a + b)"
-# hash1 = formula_hash(all_normalize_formula(latex1))
-# hash2 = formula_hash(all_normalize_formula(latex2))
-
 

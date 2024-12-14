@@ -17,6 +17,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+LOGOUT_REDIRECT_URL = '/'  # Перенаправление на главную страницу после выхода
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -27,8 +28,8 @@ SECRET_KEY = 'django-insecure-**83s%x2g*d&3js!ncpb((+y*i5l^ti!a!k9t7b6*3_-aj-2c5
 DEBUG = True
 
 ALLOWED_HOSTS = []
-LOGIN_REDIRECT_URL = '/api/profile/'
-LOGIN_URL = '/api/login/'
+LOGIN_REDIRECT_URL = '/profile/'
+LOGIN_URL = '/login/'
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Сессии хранятся в базе
 SESSION_COOKIE_AGE = 1209600  # Две недели (в секундах)
 AUTH_USER_MODEL = 'api.CustomUser'

@@ -12,21 +12,21 @@
 
     .container {
         display: flex;
-        flex-wrap: wrap; /* Адаптивное размещение */
+        flex-wrap: wrap;
         justify-content: center;
         padding: 20px;
         max-width: 1200px;
-        margin: 0 auto; /* Центрирование контейнера */
+        margin: 0 auto;
     }
 
     .sidebar {
-        width: 250px; /* Уменьшенная фиксированная ширина */
+        width: 250px;
         background-color: #ffffff;
         padding: 20px;
         box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
         border-radius: 8px;
         font-size: 16px;
-        flex-shrink: 0; /* Убеждаемся, что ширина не меняется */
+        flex-shrink: 0;
     }
 
     .sidebar h2 {
@@ -97,22 +97,6 @@
         height: 100px;
         border-radius: 50%;
         border: 2px solid #ccc;
-    }
-
-    .edit-icon {
-        position: absolute;
-        bottom: 5px;
-        right: 5px;
-        background-color: #fff;
-        border: 2px solid #007bff;
-        border-radius: 50%;
-        padding: 5px;
-        cursor: pointer;
-    }
-
-    .edit-icon img {
-        width: 16px;
-        height: 16px;
     }
 
     .profile-form {
@@ -193,38 +177,34 @@
             <h1>Детали профиля</h1>
         </div>
         <div class="profile-avatar">
-    {% if user.profile_picture %}
-        <!-- Если у пользователя есть фото профиля -->
-        <img src="{{ user.profile_picture.url }}" alt="Аватар">
-    {% else %}
-        <!-- Если фото профиля нет -->
-        <img src="{% static 'img/avatar.png' %}" alt="Аватар">
-    {% endif %}
-    <div class="edit-icon">
-        <!-- Иконка редактирования -->
-        <label for="profile_picture">
-            <img src="{% static 'img/edit-icon.svg' %}" alt="Редактировать">
-        </label>
-        <input type="file" id="profile_picture" name="profile_picture" accept="image/*" style="display: none;">
-    </div>
-</div>
+            {% if user.profile_picture %}
+                <img src="{{ user.profile_picture.url }}" alt="Аватар">
+            {% else %}
+                <img src="{% static 'img/default-avatar.png' %}" alt="Аватар">
+            {% endif %}
+        </div>
 
-        <form class="profile-form" method="post">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="username">Логин</label>
-                <input type="text" id="username" name="username" value="{{ user.first_name }}" readonly>
-            </div>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" value="{{ user.email }}" readonly>
-            </div>
-            <div class="form-group">
-                <label for="date_joined">Дата регистрации</label>
-                <input type="text" id="date_joined" name="date_joined" value="{{ user.date_joined|date:'d.m.Y' }}" readonly>
-            </div>
-            <button type="submit" class="save-button">Сохранить изменения</button>
-        </form>
+        <form class="profile-form" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="first_name">Имя</label>
+        <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}">
+    </div>
+    <div class="form-group">
+        <label for="last_name">Фамилия</label>
+        <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}">
+    </div>
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" value="{{ user.email }}" readonly>
+    </div>
+    <div class="form-group">
+        <label for="profile_picture">Загрузить фото профиля</label>
+        <input type="file" id="profile_picture_upload" name="profile_picture">
+    </div>
+    <button type="submit" class="save-button">Сохранить изменения</button>
+</form>
+
     </main>
 </div>
 {% endblock %}

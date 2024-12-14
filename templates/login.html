@@ -8,9 +8,11 @@
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/nullstyle.css' %}">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
 </head>
 
 <body>
@@ -21,7 +23,7 @@
           <a href="#" class="auth-link active-link">Войти</a> <span class="auth-link auth-separator">|</span> <a
             href="/register/" class="auth-link">Зарегистрироваться</a>
         </div>
-        <form method="post" class="login-form">
+        <form method="post" class="login-form" id="loginForm">
           {% csrf_token %}
           <div class="form-group">
             <label for="login">Почта</label>
@@ -33,7 +35,7 @@
             <div class="password-input form-input">
               <input type="password" id="password" name="password" placeholder="Введите пароль">
               <button type="button" class="toggle-password">
-                <img src="{% static 'img/eye.svg' %}" alt="">
+                <i class="bi bi-eye icon" style="size: 1rem !important;"></i>
               </button>
             </div>
           </div>
@@ -53,18 +55,171 @@
       </div>
     </div>
     <div class="column">
-      <div class="column-content column-content-right">
-        <div>
-          <pre class="column-text">
-            // f(x) xyz plus g(x)%*xyz arrow
-            // www y(x) = f(x) summ
-            // f'(x) derivative plus integral
-            // lambda x.y -> beta reduction
+      <div class="column-content column-content-right" id="rightColumn">
+        <div style="position: relative; overflow: hidden;">
+          <pre class="column-text" id="scrollingText" style="font-size: 1.5rem; opacity: 0;">
+            <span style="display: block; margin-left: 20px;"><span style="color: black !important;">// f(x)</span> xyz plus g(x)%*xyz arrow</span>
+            <span style="display: block; margin-left: 40px;"><span style="color: black !important;">// www</span> y(x) = f(x) summ</span>
+            <span style="display: block; margin-left: 60px;"><span style="color: black !important;">// f'(x)</span> derivative plus integral</span>
+            <span style="display: block; margin-left: 80px;"><span style="color: black !important;">// lambda</span> x.y -> beta reduction</span>
           </pre>
         </div>
       </div>
     </div>
   </div>
+
+  <script>
+    // Анимация элементов формы при загрузке страницы
+    const formGroups = document.querySelectorAll("#loginForm .form-group");
+    const authLinks = document.querySelectorAll(".auth-link");
+    const rememberMe = document.querySelector(".remember-me");
+    const forgotPassword = document.querySelector(".forgot-password");
+    const authSeparator = document.querySelector(".auth-separator"); // Элемент палочки
+    const scrollingText = document.getElementById("scrollingText");
+    const rightColumn = document.getElementById("rightColumn"); // Получаем элемент правой колонки
+
+    // Отключаем прокрутку
+    document.body.style.overflow = 'hidden';
+
+    // Анимация колонки справа
+    gsap.from("#rightColumn", {
+      duration: 1.5, // Уменьшено время анимации для большей скорости
+      x: 500, // Начальная позиция (выезжает справа)
+      opacity: 0,
+      ease: "power2.out",
+      delay: 0,
+      onComplete: () => {
+        // Включаем прокрутку после завершения анимации
+        document.body.style.overflow = '';
+
+        // Показываем текст и запускаем анимацию печатания
+        scrollingText.style.opacity = '1'; // Делаем текст видимым
+        startTypingAnimation(); // Запускаем анимацию печатания
+      }
+    });
+
+
+    // Анимация групп формы
+    formGroups.forEach((group, index) => {
+      gsap.from(group, {
+        duration: 0.7,
+        opacity: 0,
+        x: index % 2 === 0 ? -50 : 50,
+        stagger: 0.3,
+        ease: "power2.out",
+        delay: 0.5 // Задержка для групп формы
+      });
+    });
+
+    // Анимация элементов под формой
+    gsap.from(rememberMe, {
+      duration: 0.7,
+      opacity: 0,
+      y: 20,
+      ease: "power2.out",
+      delay: 1 // Задержка для элемента "Запомнить меня"
+    });
+
+    gsap.from(forgotPassword, {
+      duration: 0.7,
+      opacity: 0,
+      y: 20,
+      ease: "power2.out",
+      delay: 1.2 // Задержка для элемента "Забыли пароль?"
+    });
+
+    // Анимация палочки между ссылками
+    gsap.from(authSeparator, {
+      duration: 0.7,
+      opacity: 0,
+      scaleY: 0, // Начальное значение для вертикальной анимации
+      transformOrigin: "top", // Устанавливаем точку трансформации
+      ease: "power2.out",
+      delay: 0.8 // Задержка для палочки
+    });
+
+    // Анимация кнопки "Войти"
+    gsap.from(".login-button", {
+      duration: 0.7,
+      opacity: 0,
+      scale: 0.5,
+      ease: "back.out(1.7)",
+      delay: 0.5
+    });
+
+    // Анимация ссылки "Зарегистрироваться"
+    gsap.from(".auth-link:last-child", {
+      duration: 0.7,
+      opacity: 0,
+      x: -50,
+      ease: "power2.out",
+      delay: 0.5
+    });
+
+    // Анимация надписи "Войти"
+    gsap.from(".auth-link.active-link", {
+      duration: 0.7,
+      opacity: 0,
+      y: -20,
+      ease: "power2.out",
+      delay: 0.5
+    });
+
+    // Получаем элементы
+    const passwordInput = document.getElementById("password");
+    const togglePasswordButton = document.querySelector(".toggle-password");
+
+    // Обработчик события для кнопки переключения пароля
+    togglePasswordButton.addEventListener("click", function() {
+      // Проверяем текущий тип поля ввода
+      const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+      passwordInput.setAttribute("type", type); // Меняем тип на противоположный
+
+      // Меняем иконку в зависимости от состояния
+      const currentIcon = this.querySelector("i");
+
+      // Плавная смена иконки
+      currentIcon.style.opacity = '0'; // Уменьшаем прозрачность
+      setTimeout(() => {
+        // Меняем класс иконки
+        if (type === "password") {
+          currentIcon.className = "bi bi-eye icon"; // Иконка для показа пароля
+        } else {
+          currentIcon.className = "bi bi-eye-slash icon"; // Иконка для скрытия пароля
+        }
+        currentIcon.style.opacity = '1'; // Восстанавливаем прозрачность
+      }, 200); // Задержка, чтобы соответствовать времени перехода
+    });
+
+    // Функция для анимации печатания
+    function startTypingAnimation() {
+      const text = scrollingText.innerText;
+      scrollingText.innerText = ''; // Очищаем текст
+      const lines = text.split('\n'); // Разделяем текст на строки
+      let lineIndex = 0;
+      let charIndex = 0;
+
+      const typingInterval = setInterval(() => {
+        if (lineIndex < lines.length) {
+          if (charIndex < lines[lineIndex].length) {
+            scrollingText.innerText += lines[lineIndex].charAt(charIndex); // Печатаем одну букву
+            charIndex++;
+          } else {
+            const randomSpaces = ' '.repeat(Math.floor(Math.random() * 10)); // Случайное количество пробелов от 0 до 9
+            scrollingText.innerText += '\n' + randomSpaces; // Переход на новую строку с пробелами
+
+            const randomMargin = Math.floor(Math.random() * 10) + 5; // Случайный отступ от 5 до 15 пикселей
+            scrollingText.style.marginBottom = `${randomMargin}px`; // Применяем случайный отступ
+
+            lineIndex++;
+            charIndex = 0; // Сбрасываем индекс символа для следующей строки
+          }
+        } else {
+          clearInterval(typingInterval); // Останавливаем анимацию, когда текст полностью напечатан
+        }
+      }, 10); // Уменьшена задержка между символами для увеличения скорости
+    }
+  </script>
 
 </body>
 

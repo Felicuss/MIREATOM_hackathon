@@ -30,25 +30,16 @@ class CustomUser(AbstractBaseUser):
     date_joined = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
-    profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
+    profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True, default='profile_pics/default-avatar.png')  # Добавление дефолтного изображения
 
-    USERNAME_FIELD = 'email'  # Используем email как основной идентификатор
-    REQUIRED_FIELDS = ['first_name', 'last_name']  # Поля, которые обязательны при регистрации
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['first_name', 'last_name']
 
     objects = CustomUserManager()
 
     def __str__(self):
         return self.email
 
-    def has_perm(self, perm, obj=None):
-        return self.is_admin
-
-    def has_module_perms(self, app_label):
-        return self.is_admin
-
-    class Meta:
-        verbose_name = 'пользователь'
-        verbose_name_plural = 'пользователи'
 
 
 
@@ -56,9 +47,10 @@ class Formula(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     latex_code = models.TextField()
-    latex_hash = models.CharField(max_length=64, unique=True)  # Хэш-код
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='formulas')
     created_at = models.DateTimeField(auto_now_add=True)
+    normalized_formula = models.TextField(blank=True, null=True)  # Новое поле для нормализованной формулы
+    similar_formulas = models.ManyToManyField('self', symmetrical=False, related_name='related_formulas')  # Добавлен related_name
 
     def __str__(self):
         return self.title

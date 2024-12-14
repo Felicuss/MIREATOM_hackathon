@@ -1,12 +1,14 @@
 from django.contrib.auth.views import LoginView
 from django.http import JsonResponse
+from sympy import latex
+
 from .forms import CustomUserCreationForm, CustomUserProfileForm
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Formula
-from .main import formula_hash, all_normalize_formula
+from .main import formula_hash, all_normalize_formula, latex_to_sympy, compare_formulas
 import json
 
 def article_detail(request, article_id):
@@ -43,53 +45,71 @@ def save_formula(request):
             if not latex_code:
                 return JsonResponse({'status': 'error', 'message': 'Формула не может быть пустой.'})
 
-            # Нормализуем и получаем хэш от LaTeX формулы
+            # Нормализуем LaTeX формулу
             normalize_latex = all_normalize_formula(latex_code)
-            latex_hash = formula_hash(normalize_latex)
 
-            # Проверяем, существует ли уже такая формула по хэш-коду
-            existing_formula = Formula.objects.filter(latex_hash=latex_hash).first()
-            if existing_formula:
-                # Возвращаем информацию о существующей формуле
-                return JsonResponse({'status': 'duplicate', 'message': 'Такая формула уже существует.', 'formula': {
-                    'title': existing_formula.title,
-                    'latex_code': existing_formula.latex_code,
-                }})
-
-            # Сохраняем новую формулу
+            # Сохраняем формулу в базу данных
             formula = Formula.objects.create(
                 title=title,
                 description=description,
                 latex_code=latex_code,
-                latex_hash=latex_hash,
+                normalized_formula=latex(normalize_latex),  # Сохраняем нормализованную формулу
                 user=request.user
             )
+
+            # Теперь ищем схожие формулы
+            similar_formulas = []
+            for existing_formula in Formula.objects.exclude(id=formula.id):
+                is_similar, similarity = compare_formulas(latex(normalize_latex), existing_formula.normalized_formula)
+                if is_similar:
+                    existing_formula.similar_formulas.add(Formula.objects.last().id)
+                    similar_formulas.append(existing_formula.id)
+
+            # Добавляем найденные схожие формулы в поле similar_formulas
+            formula.similar_formulas.add(*similar_formulas)
+            # Сохраняем изменения
+            formula.save()
+
             return JsonResponse({'status': 'success', 'message': f"Формула '{formula.title}' успешно сохранена!"})
 
         except json.JSONDecodeError:
             return JsonResponse({'status': 'error', 'message': 'Некорректный формат данных.'})
 
     return JsonResponse({'status': 'error', 'message': 'Недопустимый метод.'})
-
+import logging
+logger = logging.getLogger(__name__)
 
 @login_required
 def profile(request):
     user = request.user
 
     if request.method == 'POST':
+        logger.info(f"request.FILES: {request.FILES}")
         form = CustomUserProfileForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
-            form.save()
+            saved_user = form.save()
+            logger.info(f"Файл сохранен: {saved_user.profile_picture}")
             messages.success(request, "Фото профиля обновлено!")
             return redirect('profile')
+        else:
+            logger.error(f"Ошибка формы: {form.errors}")
+            messages.error(request, f"Ошибка формы: {form.errors}")
     else:
         form = CustomUserProfileForm(instance=user)
 
     return render(request, 'profile.html', {'form': form})
 
 
+
+
+
 def formula_editor(request):
     return render(request,'editor.html')
+
+def custom_logout_view(request):
+    """Позволяет выйти через GET-запрос"""
+    logout(request)
+    return redirect('/')  # Перенаправление на главную страницу
 
 def register_view(request):
     if request.method == 'POST':
