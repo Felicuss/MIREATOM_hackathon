@@ -65,7 +65,9 @@
 </head>
 <body>
     <header style="display: flex; align-items: center; background-color: #10437E; transition: height 0.3s ease; position: relative;">
-        <img src="{% static 'img/app-icon.png' %}" alt="Иконка приложения" class="app-icon" style="margin-right: 40px;">
+        <a href="{% url 'homepage' %}" style="display: flex; align-items: center; text-decoration: none;">
+            <img src="{% static 'img/app-icon.png' %}" alt="Иконка приложения" class="app-icon" style="margin-right: 40px;">
+        </a>
         <div style="margin-left: 10px;"></div>
         <div style="margin-left: 10px; display: flex; gap: 20px;">
             <a href="{% url 'editor' %}" class="nav-button" style="text-align: center; width: 150px; transition: background-color 0.3s; white-space: nowrap; text-decoration: none; color: white;">
@@ -81,8 +83,7 @@
         </div>
     </header>
     
-    <div class="container">
+    
         {% block content %}{% endblock %}
-    </div>
 </body>
 </html>
