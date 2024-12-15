@@ -13,7 +13,8 @@ import json
 
 def article_detail(request, article_id):
     formula = get_object_or_404(Formula, pk=article_id)
-    return render(request, 'article_detail.html', {'formula': formula})
+    similar_formulas = formula.similar_formulas.all()
+    return render(request, 'article_detail.html', {'formula': formula, 'simillar_formula': similar_formulas})
 
 def homepage(request):
     query = request.GET.get('query', '')  # Получаем параметр поиска из URL

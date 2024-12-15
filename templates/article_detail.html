@@ -1,33 +1,23 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ formula.title }}</title>
+{% extends "base.html" %}
+{% block title %}Редактор LaTeX{% endblock %}
 
-    <!-- Подключаем MathJax для рендеринга формул -->
+{% block extra_styles %}
+{% load static %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
     <script type="text/javascript" async
         src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
     </script>
-
-    <!-- Подключаем FontAwesome для иконок -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-
-    <!-- Подключаем библиотеку Clipboard.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
-
     <style>
         /* Общие стили */
         body {
             margin: 0;
             padding: 0;
             font-family: 'Roboto', sans-serif;
-            background: linear-gradient(120deg, #74ebd5, #acb6e5);
+            background: linear-gradient(120deg, #f5fdfc, #ced4ee);
             color: #2c3e50;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
             flex-direction: column;
         }
 
@@ -40,6 +30,8 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             border-radius: 15px;
             animation: fadeInUp 1s ease-out;
+    margin-top: 40px;;
+
         }
 
         /* Заголовок статьи */
@@ -75,22 +67,23 @@
             box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
         }
 
-        /* Иконка кнопки копирования */
-        .copy-btn {
-            position: absolute;
-            top: 50%;
-            right: -50px;
-            transform: translateY(-50%);
-            background: linear-gradient(135deg, #6dd5ed, #2193b0);
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 50%;
-            font-size: 22px;
-            cursor: pointer;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease, background-color 0.3s ease;
-        }
+/* Иконка кнопки копирования */
+.copy-btn {
+    width: 50px;
+    height: 50px;
+    position: relative; /* Устанавливаем относительное позиционирование */
+    left: 1rem; /* Сдвигаем кнопку вправо на 100 пикселей */
+    align-items: center;
+    background: linear-gradient(135deg, #6dd5ed, #2193b0);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 22px;
+    cursor: pointer;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
 
         .copy-btn:hover {
             transform: scale(1.2);
@@ -191,8 +184,74 @@
                 transform: translateY(-20px) translateX(20px);
             }
         }
+        .similar-formulas {
+    margin-top: 50px;
+    text-align: center;
+}
+
+.similar-formulas h3 {
+    font-size: 24px;
+    margin-bottom: 40px;
+    color: #333;
+}
+
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    padding: 15px;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-title {
+    font-size: 18px;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #007bff;
+}
+
+.card-body {
+    margin-bottom: 15px;
+}
+
+.card-description {
+    font-size: 14px;
+    color: #555;
+}
+
+.card-link {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 12px;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.card-link:hover {
+    background-color: #0056b3;
+}
+
     </style>
-</head>
+    {% endblock %}
+
+    {% block content %}
 <body>
 
     <div class="background-decor">
@@ -220,11 +279,24 @@
         <div class="article-description">
             <p>{{ formula.description }}</p>
         </div>
-
-        <!-- Кнопка возврата на главную -->
-        <a href="/" class="back-button">Вернуться на главную</a>
     </div>
-
+    <div class="similar-formulas"></div>
+        <h3 style="margin-bottom: 30px;">Похожие формулы</h3>
+        <div class="card-container">
+            {% for similar_formula in formula.similar_formulas.all %}
+            <div class="card">
+                <div class="card-title">{{ similar_formula.title }}</div>
+                <div class="card-body">
+                    <div class="mathjax-display" style="text-align: center;">
+                        \( {{ similar_formula.latex_code }} \)
+                    </div>
+                    <p class="card-description" style="text-align: center;">{{ similar_formula.description|default:"Описание отсутствует" }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <p>Похожие формулы отсутствуют.</p>
+            {% endfor %}
+        </div>
     <script>
         // Инициализация кнопки копирования с Clipboard.js
         new ClipboardJS('#copy-btn');
@@ -239,3 +311,5 @@
 
 </body>
 </html>
+
+{% endblock %}
