@@ -13,6 +13,27 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+<style>
+  .home-button {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.5rem;
+      color: #000;
+      transition: color 0.3s;
+    }
+
+    .home-button:hover {
+      color: #007bff;
+    }
+    body {
+  overflow: hidden;
+}
+
+</style>
 </head>
 
 <body>
@@ -85,37 +106,28 @@
   </div>
 
   <script>
-    // Анимация элементов формы при загрузке страницы
     const formGroups = document.querySelectorAll("#registerForm .form-group");
     const authLinks = document.querySelectorAll(".auth-link");
     const rememberMe = document.querySelector(".remember-me");
     const forgotPassword = document.querySelector(".forgot-password");
-    const authSeparator = document.querySelector(".auth-separator"); // Элемент палочки
+    const authSeparator = document.querySelector(".auth-separator");
     const scrollingText = document.getElementById("scrollingText");
-    scrollingText.style.opacity = '0'; // Скрываем текст изначально
-    const rightColumn = document.getElementById("rightColumn"); // Получаем элемент правой колонки
-
-    // Отключаем прокрутку
+    scrollingText.style.opacity = '0';
+    const rightColumn = document.getElementById("rightColumn");
     document.body.style.overflow = 'hidden';
-
-    // Анимация колонки справа
     gsap.from("#rightColumn", {
-      duration: 1.5, // Уменьшено время анимации для большей скорости
-      x: 500, // Начальная позиция (выезжает справа)
+      duration: 1.5,
+      x: 500,
       opacity: 0,
       ease: "power2.out",
       delay: 0,
       onComplete: () => {
-        // Включаем прокрутку после завершения анимации
         document.body.style.overflow = '';
-
-        // Показываем текст и запускаем анимацию печатания
-        scrollingText.style.opacity = '1'; // Делаем текст видимым
-        startTypingAnimation(); // Запускаем анимацию печатания
+        scrollingText.style.opacity = '1';
+        startTypingAnimation();
       }
     });
 
-    // Анимация групп формы
     formGroups.forEach((group, index) => {
       gsap.from(group, {
         duration: 0.7,
@@ -123,11 +135,9 @@
         x: index % 2 === 0 ? -50 : 50,
         stagger: 0.3,
         ease: "power2.out",
-        delay: 0.5 // Задержка для групп формы
+        delay: 0.5
       });
     });
-
-    // Анимация кнопки "Зарегистрироваться"
     gsap.from(".login-button", {
       duration: 0.7,
       opacity: 0,
@@ -136,64 +146,53 @@
       delay: 0.5
     });
 
-    // Получаем элементы
     const passwordInputs = [document.getElementById("password1"), document.getElementById("password2")];
     const togglePasswordButtons = document.querySelectorAll(".toggle-password");
 
-    // Обработчик события для кнопок переключения пароля
     togglePasswordButtons.forEach((button, index) => {
       button.addEventListener("click", function() {
-        // Проверяем текущий тип поля ввода
         const type = passwordInputs[index].getAttribute("type") === "password" ? "text" : "password";
-        passwordInputs[index].setAttribute("type", type); // Меняем тип на противоположный
+        passwordInputs[index].setAttribute("type", type);
 
-        // Меняем иконку в зависимости от состояния
         const currentIcon = this.querySelector("i");
 
-        // Плавная смена иконки
-        currentIcon.style.opacity = '0'; // Уменьшаем прозрачность
+        currentIcon.style.opacity = '0';
         setTimeout(() => {
-          // Меняем класс иконки
           if (type === "password") {
-            currentIcon.className = "bi bi-eye icon"; // Иконка для показа пароля
+            currentIcon.className = "bi bi-eye icon";
           } else {
-            currentIcon.className = "bi bi-eye-slash icon"; // Иконка для скрытия пароля
+            currentIcon.className = "bi bi-eye-slash icon";
           }
-          currentIcon.style.opacity = '1'; // Восстанавливаем прозрачность
-        }, 200); // Задержка, чтобы соответствовать времени перехода
+          currentIcon.style.opacity = '1';
+        }, 200);
       });
     });
 
-    // Функция для анимации печатания
     function startTypingAnimation() {
       const text = scrollingText.innerText;
-      scrollingText.innerText = ''; // Очищаем текст
-      const lines = text.split('\n'); // Разделяем текст на строки
+      scrollingText.innerText = '';
+      const lines = text.split('\n');
       let lineIndex = 0;
       let charIndex = 0;
 
       const typingInterval = setInterval(() => {
         if (lineIndex < lines.length) {
           if (charIndex < lines[lineIndex].length) {
-            // Печатаем одну букву
-            scrollingText.innerText += lines[lineIndex].charAt(charIndex); // Печатаем одну букву
+            scrollingText.innerText += lines[lineIndex].charAt(charIndex);
             charIndex++;
           } else {
-            // Генерируем случайное количество пробелов перед строкой
-            const randomSpaces = ' '.repeat(Math.floor(Math.random() * 10)); // Случайное количество пробелов от 0 до 9
-            scrollingText.innerText += '\n' + randomSpaces; // Переход на новую строку с пробелами
-
-            // Генерируем случайный отступ между строками
-            const randomMargin = Math.floor(Math.random() * 10) + 5; // Случайный отступ от 5 до 15 пикселей
-            scrollingText.style.marginBottom = `${randomMargin}px`; // Применяем случайный отступ
+            const randomSpaces = ' '.repeat(Math.floor(Math.random() * 10)); 
+            scrollingText.innerText += '\n' + randomSpaces;
+            const randomMargin = Math.floor(Math.random() * 10) + 5;
+            scrollingText.style.marginBottom = `${randomMargin}px`;
 
             lineIndex++;
-            charIndex = 0; // Сбрасываем индекс символа для следующей строки
+            charIndex = 0;
           }
         } else {
-          clearInterval(typingInterval); // Останавливаем анимацию, когда текст полностью напечатан
+          clearInterval(typingInterval);
         }
-      }, 10); // Уменьшена задержка между символами для увеличения скорости
+      }, 10);
     }
   </script>
 

@@ -6,30 +6,26 @@ from string import ascii_letters
 import logging
 logger = logging.getLogger(__name__)
 
-# Преобразует LaTeX-формулу в объект SymPy
+
 def latex_to_sympy(latex_formula):
     try:
         return parse_latex(latex_formula)
     except Exception as e:
         raise ValueError(f"Ошибка преобразования LaTeX в SymPy: {e}")
 
-# Нормализует формулу, упрощая её
+
 def normalize_formula(latex_formula):
     if not latex_formula or not latex_formula.strip():
         raise ValueError("Формула пуста или некорректна.")
 
     try:
-        # Преобразуем LaTeX в SymPy
         sympy_expr = latex_to_sympy(latex_formula)
     except Exception as e:
         raise ValueError(f"Ошибка обработки формулы: {e}")
 
-    # Упрощаем выражение
     normalized_expr = simplify(sympy_expr)
 
     return normalized_expr
-
-# Переименовывает переменные в формуле для однородного представления
 def rename_variables(formula: str) -> str:
     letters: str = ascii_letters
     dict_f: dict[int, str | int] = {}
@@ -68,7 +64,6 @@ def compare_formulas(latex_formula1, latex_formula2):
     norm_str1 = latex(latex_formula1)
     norm_str2 = latex(latex_formula2)
     similarity = fuzz.ratio(norm_str1, norm_str2)
-    print(similarity)
     return similarity >= 75, similarity
 
 

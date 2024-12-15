@@ -171,7 +171,7 @@
         .open-article-btn:hover {
             background-color: #2980b9;
             transform: scale(1.05);
-            text-decoration: none;
+            
         }
         @media (max-width: 1024px) {
             .article-card {
@@ -269,24 +269,18 @@
             const formula = container.querySelector('.mathjax-display');
             const containerWidth = container.offsetWidth;
             const containerHeight = container.offsetHeight;
-            let scale = 1; // Начальный масштаб
-
-            // Определяем масштаб, чтобы формула влезала в контейнер
+            let scale = 1;
             if (formula.scrollWidth > containerWidth || formula.scrollHeight > containerHeight) {
                 scale = Math.min(containerWidth / formula.scrollWidth, containerHeight / formula.scrollHeight);
             }
 
-            // Применяем масштаб через transform
             formula.style.transform = `scale(${scale})`;
         }
-
-        // Применяем масштабирование после рендеринга MathJax
         MathJax.Hub.Queue(() => {
             const formulaContainers = document.querySelectorAll('.article-formula');
             formulaContainers.forEach(container => scaleFormula(container));
         });
 
-        // Пересчитываем масштаб при изменении размеров окна
         window.addEventListener('resize', () => {
             const formulaContainers = document.querySelectorAll('.article-formula');
             formulaContainers.forEach(container => scaleFormula(container));
