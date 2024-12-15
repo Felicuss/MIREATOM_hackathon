@@ -69,7 +69,7 @@
 2. Клонируйте репозиторий:
 
    ```bash
-   git clone https://github.com/ваш-логин/название-репозитория.git
+   git clone https://github.com/Felicuss/MIREATOM_hackathon.git
    cd название-репозитория
    ```
 
