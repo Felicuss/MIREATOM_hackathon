@@ -1,5 +1,5 @@
 # Используем официальный образ Python
-FROM python:3.9
+FROM python:3.12-slim
 
 # Устанавливаем рабочую директорию
 WORKDIR /app
@@ -17,5 +17,5 @@ COPY . .
 EXPOSE 8000
 
 # Команда для запуска приложения
-CMD ["python", "manage.py", "runserver", "127.0.0.1:8000"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 
